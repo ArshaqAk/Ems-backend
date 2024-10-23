@@ -22,7 +22,6 @@ export const getAllEmployee=()=>{
 export const addEmployee =(doc)=>{
   const {id}=doc.body
   return Employee.findOne({id}).then((response)=>{
-    console.log(response)
     if(response){
       return {
         status: 401,
@@ -49,7 +48,7 @@ export const addEmployee =(doc)=>{
 
 //delete employee
 export const deleteEmployee =(id)=>{
-  return Employee.findByIdAndDelete(id).then((response)=>{
+  return Employee.findOneAndDelete({_id:id}).then((response)=>{
     if(response){
       return {
         status: 200,
@@ -69,4 +68,54 @@ export const deleteEmployee =(id)=>{
     message: "failed to delete employee"
   }
  })}
+
+ export const viewEmployee=(id)=>{
+  return Employee.findOne({_id:id}).then((response)=>{
+    if(response){
+      return {
+        status: 200,
+        employee: response
+      }
+    }
+    else{
+      return {
+        status: 500,
+        message: "Employee not found"
+      }
+    }
+
+  })
+ }
+
+ //edit function
+ 
+ export const editEmployee=(doc)=>{
+  const {id}=doc
+  return Employee.findOne({id}).then((result)=>{
+    if(result){
+      result.id=doc.id
+      result.name=doc.name
+      result.age=doc.age
+      result.salary=doc.salary
+      result.designation=doc.designation
+      result.save() //to update data
+      return{
+        status: 200,
+        message: "Employee updated successfully"
+      }
+    }
+    else{
+      return{
+        status: 404,
+        message: "Employee not found"
+      }
+    }
+  })
+  .catch((error)=>{
+    return{
+      status: 500,
+      message: "failed to add employee"
+    }
+  })
+ }
  
